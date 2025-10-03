@@ -3,14 +3,11 @@ from typing import List
 import pandas as pd 
 from pathlib import Path
 from sqlalchemy import create_engine, text 
-
 from dotenv import load_dotenv
 import os
+
 load_dotenv()  # take environment variables
 senha_db=os.getenv("senha_db")
-
-
-
 engine = create_engine(f"mysql+pymysql://root:{senha_db}@127.0.0.1:3306/db_escola")
 
 
@@ -23,7 +20,6 @@ def consulta_alunos(id: int):
                                where id = {id}""",con=engine)
 
     return df_endereco.to_dict(orient="records")
-
 
 @app.post("/inserir-aluno/", response_model=dict)
 def inserir_aluno(dados_alunos: dict):
@@ -39,7 +35,6 @@ def inserir_aluno(dados_alunos: dict):
 
     return {"mensagem": "aluno cadastrado com sucesso"}
 
-
 @app.delete("/deletar-aluno-id/", response_model=dict)
 def deletar_aluno(id: int):
     with engine.begin() as conn:
@@ -51,7 +46,6 @@ def deletar_aluno(id: int):
             {"id": id}
         )
     return {"mensagem": f"Aluno com id {id} deletado com sucesso"}
-
 
 @app.put("/atualizar-aluno/", response_model=dict)
 def atualizar_aluno(dados_aluno: dict):
@@ -69,32 +63,12 @@ def atualizar_aluno(dados_aluno: dict):
         )
     return {"mensagem": f"Aluno com id {id} atualizado com sucesso"}
 
-
-from fastapi import FastAPI 
-from typing import List
-import pandas as pd 
-from pathlib import Path
-from sqlalchemy import create_engine, text 
-
-from dotenv import load_dotenv
-import os
-load_dotenv()  # take environment variables
-senha_db=os.getenv("senha_db")
-
-
-engine = create_engine(f"mysql+pymysql://root:{senha_db}@127.0.0.1:3306/db_escola")
-
-
-app = FastAPI()
-
 @app.get("/enderecos-por-id/", response_model=List[dict])
 def consulta_endereco(id: int):
     df_enderecos = pd.read_sql(f"""select * from tb_enderecos 
                                where id = {id}""",con=engine)
 
     return df_enderecos.to_dict(orient="records")
-
-
 
 @app.get("/enderecos-por-estado/", response_model=List[dict])
 def consulta_endereco_estado(estado: str):
@@ -103,9 +77,6 @@ def consulta_endereco_estado(estado: str):
         con=engine
     )
     return df_enderecos.to_dict(orient="records")
-
-
-
 
 @app.post("/inserir-endereco/", response_model=dict)
 def inserir_endereco(dados_endereco: dict):
@@ -138,8 +109,6 @@ def atualizar_endereco(dados_endereco: dict):
             dados_endereco
         )
     return {"mensagem": "endereco atualizado com sucesso"}
-
-
 
 @app.delete("/deletar-endereco-por-id/", response_model=dict)
 def deletar_endereco(id: int):
